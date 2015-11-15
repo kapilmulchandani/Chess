@@ -32,7 +32,7 @@ void DrawBoard(piecol *Board[8][8])
 			}
 			switch ((Board[x][y])->Piece)
 			{
-				case pawn		: printf("P");
+				case pawn : printf("P");
 				break;																			
 				case rook		: printf("R");
 				break;																			

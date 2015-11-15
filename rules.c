@@ -17,7 +17,7 @@ Pawnmove {
 		else
 			can move 1 block in front;
 	if (diagonal not empty)
-		can mmove diagonal 1 block;
+		can move diagonal 1 block;
 } 
 
 Kingmove {

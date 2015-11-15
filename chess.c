@@ -1,6 +1,7 @@
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "chess.h"
 
 GameData Gamestate;
@@ -15,18 +16,20 @@ void NextTurn()
 {
 
 	if (Gamestate.Turn == white)
-	{
+	{ 
+		printf("Black's turn");
 		Gamestate.Turn = black;
 	}
 	else
 	{
+		printf("White's Turn");
 		Gamestate.Turn = white;
 	}
 }
 
 
-void CreateBoard(piecol *Board[8][8])
-{
+void CreateBoard(piecol *Board[8][8])      /* Creates the 8x8 Board */
+{ 
 	Gamestate.White.CastleLeft	=
 	Gamestate.White.CastleRight	=
 	Gamestate.Black.CastleLeft	=
@@ -43,7 +46,7 @@ void CreateBoard(piecol *Board[8][8])
 }
 
 
-void SetupBoard(piecol *Board[8][8])
+void SetupBoard(piecol *Board[8][8])		/* Sets up Chess Board */
 {
 	int x, y;
 
@@ -89,21 +92,40 @@ void SetupBoard(piecol *Board[8][8])
 Move GetMove(piecol *Board[8][8])
 {
 	Move move;
+	int x, y;
+	Coordinates Coords;
 	Coordinates FromCoords = GetFromCoords(Board);
-	Coordinates ToCoords= GetToCoords(Board);
-	move.To = ToCoords;
+	Coordinates ToCoords = GetToCoords(Board);
+	
 	move.From = FromCoords;
+	
+		pawnmove(move, Board, FromCoords, ToCoords);
+	
+		rookmove(Board, FromCoords, ToCoords);
+	
+		kingmove(Board, FromCoords, ToCoords);
+		bishopmove(Board, FromCoords, ToCoords);
+
+	move.To = ToCoords;
 	MovePiece(&move, Board);
 				
 }
 
 Coordinates GetFromCoords(piecol *Board[8][8])
 {
+	int X, Y;	
 	Coordinates Coords;
 	DrawBoard(Board);
 	printf("Move which piece?\n");
 	Coords = GetInput();
 
+	while(!CheckFriendlyPiece(Coords, Board)) {
+		
+		DrawBoard(Board);
+		printf("Invalid Coordinates! Select a piece to move:\n");
+		Coords = GetInput();
+		break;
+	}
 	while (!ValidCoords(Coords.X, Coords.Y))
 	{
 		DrawBoard(Board);
@@ -122,13 +144,21 @@ Coordinates GetToCoords(piecol *Board[8][8])
 	DrawBoard(Board);
 	printf("Move piece to where?\n");
 	Coords = GetInput();
+
+	while(CheckFriendlyPiece(Coords, Board)) {
+		
+		DrawBoard(Board);
+		printf("Invalid Coordinates! Select a piece to move:\n");
+		Coords = GetInput();
+		break;
+	}
 	while (!ValidCoords(Coords.X, Coords.Y))
 	{
 		DrawBoard(Board);
 		printf("Invalid Coordinates! move piece where?\n");
 		Coords = GetInput();
 	}
-
+	
 	return Coords;
 
 }
@@ -147,12 +177,6 @@ int ConvertLetterToNumber(char ch)
 	return i;
 }
 
-void skipgarb()
-{
-	while (getchar() != '\n')
-	{
-	}
-}
 
 int ValidCoords(char x, int y)
 {
@@ -164,7 +188,8 @@ Coordinates GetInput()
 	char temp;
 	Coordinates Coords;
 	scanf("%c%d", &temp, &Coords.Y);
-	skipgarb();
+	while (getchar() != '\n') {
+	}
 	Coords.X = ConvertLetterToNumber(temp);
 	Coords.Y--;
 	return Coords;
@@ -177,12 +202,23 @@ int CheckFriendlyPiece(Coordinates Coords, piecol *Board[8][8])
 
 void MovePiece(Move *move, piecol *Board[8][8])
 {
+	
 	Board[move->To.X][move->To.Y]->Piece = Board[move->From.X][move->From.Y]->Piece;
 	Board[move->To.X][move->To.Y]->Colour = Board[move->From.X][move->From.Y]->Colour;
 	Board[move->From.X][move->From.Y]->Colour = empty;
 	Board[move->From.X][move->From.Y]->Piece = none;
+	
 }
+	
 
+float getDistance (Coordinates a, Coordinates b) {
+	float distance;
+	char temp;
+	temp = a.X;
+	a.X = ConvertLetterToNumber(temp);
+	distance = sqrt((a.X - b.X) * (a.X- b.X) + (a.Y - b.Y) * (a.Y - b.Y));
+	return distance;
+}
 
 
 main()

@@ -1,0 +1,7 @@
+if(((Coords.Y + 1) == 7) || ((Coords.Y + 1) == 2)) {
+		Move j;
+		Coordinates FromCoords;
+		Coordinates ToCoords;
+		j.From = FromCoords;
+		pawnmove(&j, Board);
+	}
