@@ -1,3 +1,21 @@
+/*****************************************************************************
+ * Copyright (C) Kapil Mulchandani kapilmulchandani2012@gmail.com
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -96,18 +114,21 @@ Move GetMove(piecol *Board[8][8])
 	Coordinates Coords;
 	Coordinates FromCoords = GetFromCoords(Board);
 	Coordinates ToCoords = GetToCoords(Board);
-	
 	move.From = FromCoords;
-	
-		pawnmove(move, Board, FromCoords, ToCoords);
-	
-		rookmove(Board, FromCoords, ToCoords);
-	
-		kingmove(Board, FromCoords, ToCoords);
-		bishopmove(Board, FromCoords, ToCoords);
-
 	move.To = ToCoords;
+	if(Board[FromCoords.X][FromCoords.Y]->Piece == pawn)
+	pawnmove(&move, Board, FromCoords, ToCoords);
+	if(Board[FromCoords.X][FromCoords.Y]->Piece == rook)
+	rookmove(&move, Board, FromCoords, ToCoords);
+	if(Board[FromCoords.X][FromCoords.Y]->Piece == queen)
+	queenmove(&move, Board, FromCoords, ToCoords);
+	if(Board[FromCoords.X][FromCoords.Y]->Piece == king)
+	kingmove(&move, Board, FromCoords, ToCoords);
+	if(Board[FromCoords.X][FromCoords.Y]->Piece == bishop)
+	bishopmove(&move, Board, FromCoords, ToCoords);
+	
 	MovePiece(&move, Board);
+	
 				
 }
 
@@ -148,7 +169,7 @@ Coordinates GetToCoords(piecol *Board[8][8])
 	while(CheckFriendlyPiece(Coords, Board)) {
 		
 		DrawBoard(Board);
-		printf("Invalid Coordinates! Select a piece to move:\n");
+		printf("Invalid Coordinates! move piece where?\n");
 		Coords = GetInput();
 		break;
 	}
@@ -178,7 +199,7 @@ int ConvertLetterToNumber(char ch)
 }
 
 
-int ValidCoords(char x, int y)
+int ValidCoords(char x, int y)		/*Valid Coordinates i.e inside the board */
 {
 	return ((0 <= x) && (x <= 7) && (0 <= y) && (y <= 7));
 }
